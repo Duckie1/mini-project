@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: test-ingress-alb
+  name: ingress-2048
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/subnets: subnet-005550b2b44f38050, subnet-00cd1ed3defeea6e1
+    alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
+    alb.ingress.kubernetes.io/certificate-arn: 'arn:aws:acm:ap-northeast-2:667994629779:certificate/f0b7d86d-831f-40c4-a333-f2d1998655c1'
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80},{"HTTPS":443}]'
+spec:
+  ingressClassName: demo
+  rules:
+    - host: test.demo-web-k8s.click
+      http:
+        paths:
+          - backend:
+              service:
+                name: service-2048
+                port:
+                  number: 443
+            path: /
+            pathType: Prefix
+          - backend:
+              service:
+                name: service-2048
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
